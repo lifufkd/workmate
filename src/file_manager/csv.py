@@ -11,7 +11,7 @@ class CsvManager:
             return f.read()
 
     @staticmethod
-    def process_file(file_path: str) -> dict:
+    def process_file(file_path: str) -> list[dict]:
         result = list()
         csv_data = CsvManager.read_file(file_path)
 
@@ -21,7 +21,7 @@ class CsvManager:
         for row in rows[1:]:
             result.append(dict(zip(rows[0], row)))
 
-        print(result)
+        return result
 
     @staticmethod
     def file_exists(file_path: str) -> bool:
