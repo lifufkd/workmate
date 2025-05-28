@@ -1,11 +1,11 @@
+from src.report_handlers.base import BaseReport
 
 
-class PayoutHandler:
+class PayoutHandler(BaseReport):
     def __init__(self):
         pass
 
-    @staticmethod
-    def _calculate_payout(employee_data: dict) -> int | None:
+    def _calculate_payout(self, employee_data: dict) -> int | None:
 
         # Trying to find existing filed name
         rate = employee_data.get("hourly_rate") or employee_data.get("rate") or employee_data.get("salary") or None
@@ -20,8 +20,7 @@ class PayoutHandler:
         else:
             return payout
 
-    @staticmethod
-    def _sort_and_aggregate_by_payout(departments_data: dict) -> dict:
+    def _sort_and_aggregate_by_payout(self, departments_data: dict) -> dict:
 
         # Sort departments alphabetically
         sorted_departments = dict(
@@ -45,8 +44,7 @@ class PayoutHandler:
 
         return sorted_departments
 
-    @staticmethod
-    def process_employees_data(employees_data: list[dict]) -> dict:
+    def process_data(self, employees_data: list[dict]) -> dict:
         result = dict()
         # Create copy of employees_data for avoid changing object in outer scope
         employees_data_copy = employees_data.copy()
@@ -54,7 +52,7 @@ class PayoutHandler:
         for employee in employees_data_copy:
 
             # Calculate payout
-            payout = PayoutHandler._calculate_payout(employee_data=employee)
+            payout = self._calculate_payout(employee_data=employee)
             if not payout:
                 continue
             # Set payout
@@ -72,6 +70,6 @@ class PayoutHandler:
                 }
 
         # Sort & aggregate employees
-        result = PayoutHandler._sort_and_aggregate_by_payout(departments_data=result)
+        result = self._sort_and_aggregate_by_payout(departments_data=result)
 
         return result

@@ -22,7 +22,7 @@ def check_files_is_existed(files_paths: list[str]) -> None:
 def process_data(report_mode: str, raw_employees_data: list[dict]) -> dict:
     match report_mode:
         case "payout":
-            processed_data = PayoutHandler.process_employees_data(raw_employees_data)
+            processed_data = PayoutHandler().process_data(raw_employees_data)
         case _:
             raise NotImplemented
 
@@ -119,7 +119,7 @@ def main():
     pretty_print_data(processed_employees_data)
 
     # Optionally exporting report in file
-    if args.report_file_name:
+    if args.export_file_name:
         export_data(
             report_type=args.export_type,
             save_path=args.export_file_name,
