@@ -6,12 +6,9 @@ class PayoutHandler:
 
     @staticmethod
     def _calculate_payout(employee_data: dict) -> int | None:
-        rate = None
-        # Trying to find existing filed name
-        for rate_variant in ["hourly_rate", "rate", "salary"]:
-            if rate_variant in employee_data:
-                rate = employee_data[rate_variant]
 
+        # Trying to find existing filed name
+        rate = employee_data.get("hourly_rate") or employee_data.get("rate") or employee_data.get("salary") or None
         if not rate:
             return None
 
