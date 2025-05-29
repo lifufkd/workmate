@@ -5,15 +5,13 @@ class CsvManager:
     def __init__(self):
         pass
 
-    @staticmethod
-    def read_file(file_path: str) -> str:
+    def read_file(self, file_path: str) -> str:
         with open(file_path, "r") as f:
             return f.read()
 
-    @staticmethod
-    def process_file(file_path: str) -> list[dict]:
+    def process_file(self, file_path: str) -> list[dict]:
         result = list()
-        csv_data = CsvManager.read_file(file_path)
+        csv_data = self.read_file(file_path)
 
         rows = csv_data.split("\n")
         rows = [i.split(",") for i in rows]
@@ -23,6 +21,5 @@ class CsvManager:
 
         return result
 
-    @staticmethod
-    def file_exists(file_path: str) -> bool:
+    def file_exists(self, file_path: str) -> bool:
         return os.path.isfile(file_path)

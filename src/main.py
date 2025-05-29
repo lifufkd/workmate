@@ -1,21 +1,21 @@
 import argparse
 import sys
 
-from file_managers.csv_manager import CsvManager
-from file_managers.json_manager import JsonManager
-from report_handlers.payout import PayoutHandler
+from src.file_managers.csv_manager import CsvManager
+from src.file_managers.json_manager import JsonManager
+from src.report_handlers.payout import PayoutHandler
 
 
 def check_files_is_existed(files_paths: list[str]) -> None:
     invalid_paths = list()
 
     for path in files_paths:
-        if not CsvManager.file_exists(path):
+        if not CsvManager().file_exists(path):
             invalid_paths.append(path)
 
     if invalid_paths:
         sys.exit(
-            "Error read files: " + ", ".join(invalid_paths)
+            "Error read files:\n" + "\n".join(invalid_paths)
         )
 
 
@@ -24,23 +24,25 @@ def process_data(report_mode: str, raw_employees_data: list[dict]) -> dict:
         case "payout":
             processed_data = PayoutHandler().process_data(raw_employees_data)
         case _:
-            raise NotImplemented
+            raise NotImplementedError
 
     return processed_data
 
 
-def export_data(report_type: str, save_path:str, processed_employees_data: dict) -> None:
+def export_data(report_type: str, save_path: str, processed_employees_data: dict) -> None:
     try:
         match report_type:
             case "JSON":
-                JsonManager.write_file(file_path=save_path, file_data=processed_employees_data)
+                JsonManager().write_file(file_path=save_path, file_data=processed_employees_data)
             case _:
-                raise NotImplemented
+                raise NotImplementedError
     except (OSError, ValueError, TypeError, UnicodeEncodeError) as e:
         print(f"Error in saving report: {e}")
+    except NotImplementedError:
+        raise NotImplementedError(f"Export method '{report_type}' is not implemented! Error in saving report")
 
 
-def pretty_print_data(data: dict) -> None:
+def pretty_print_data(data: dict) -> str:
     lines = []
     header = f"{' ':<20} {'name':<15} {'hours':>5} {'rate':>5} {'payout':>8}"
 
@@ -63,9 +65,10 @@ def pretty_print_data(data: dict) -> None:
         total_hours = summary.get("worked_hours", 0)
         total_payout = summary.get("payout", 0)
         lines.append(f"{' ':<20} {total_hours:>19} {'$':>9} {total_payout:>0,}")
-        lines.append("")  # Place empty line between departments
+        # Place empty line between departments
+        lines.append("")
 
-    print("\n".join(lines))
+    return "\n".join(lines)
 
 
 def parse_args() -> argparse.Namespace:
@@ -101,6 +104,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main():
+    csv_manager = CsvManager()
     employees_data = list()
     args = parse_args()
 
@@ -109,14 +113,14 @@ def main():
 
     # Loading all raw employees data from csv's
     for employees_file in args.employees_files:
-        pert_emp_data = CsvManager.process_file(employees_file)
+        pert_emp_data = csv_manager.process_file(employees_file)
         employees_data.extend(pert_emp_data)
 
     # Process raw data
     processed_employees_data = process_data(args.report, employees_data)
 
     # Rendering & print report in terminal
-    pretty_print_data(processed_employees_data)
+    print(pretty_print_data(processed_employees_data))
 
     # Optionally exporting report in file
     if args.export_file_name:
