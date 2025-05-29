@@ -55,13 +55,13 @@ Carol Williams        170   60     $10,200
 ## 🧪 Тестирование
 
 ```bash
-pytest --cov
+python -m pytest --cov src
 ```
 
 ## 📁 Структура проекта
 
 ```
-project/
+workmate/
 ├── src/
 │   ├── report_handlers/
 │        ├── base.py
@@ -71,6 +71,9 @@ project/
 │        └── json_manager.py
 │   └── main.py
 ├── tests/
+│   ├── test_csv_manager.py
+│   ├── test_json_manager.py
+│   ├── test_main.py
 │   └── test_payout.py
 ├── docs/
 │   ├── examples/
